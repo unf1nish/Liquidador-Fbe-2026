@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liquidador aéreo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      padding: 30px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 25px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .input-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #7899d6;
+    }
+
+    .results-section {
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-weight: 600;
+      color: #555;
+    }
+
+    .result-value {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .total-section {
+      background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .total-section h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .total-amount {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .error-msg {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: #666;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Liquidador de Flete Aéreo</h1>
+
+    <div class="input-section">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="proveedor">Agente</label>
+          <select id="proveedor">
+            <option value="A">Magnum</option>
+            <option value="B">Sunrise</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="destino">Destino</label>
+          <select id="destino">
+            <option value="">Seleccione un destino...</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="aerolineaGroup">
+          <label for="aerolinea">Aerolínea</label>
+          <select id="aerolinea">
+            <option value="">Seleccione aerolínea...</option>
+          </select>
+          <span class="error-msg" id="aerolineaError">La aerolínea es requerida para este proveedor</span>
+        </div>
+
+        <div class="form-group">
+          <label for="pesoFisico">Peso Físico (KGS)</label>
+          <input type="number" id="pesoFisico" min="0" step="0.01" placeholder="0.00" />
+        </div>
+
+        <div class="form-group" id="volumenGroup">
+          <label for="volumen" id="volumenLabel">Volumen (CBM)</label>
+          <input type="number" id="volumen" min="0" step="0.001" placeholder="0.000" />
+          <div class="info-text" id="volumenInfo">
+            <strong>Proveedor A:</strong><br>
+            • Ingrese el volumen en metros cúbicos (CBM).<br>
+            • El sistema calculará: <strong>Peso Volumen = CBM × 167</strong><br>
+            • Peso para Calcular = MAX(Peso Físico, Peso Volumen)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-section">
+      <div class="result-row">
+        <span class="result-label">Código IATA:</span>
+        <span class="result-value" id="codigoIata">-</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Peso Volumen (KGS):</span>
+        <span class="result-value" id="pesoVolumen">-</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Peso para Calcular (KGS):</span>
+        <span class="result-value" id="pesoCalcular">-</span>
+      </div>
+    </div>
+
+    <div class="results-section">
+      <h2 style="margin-bottom: 15px; color: #333;">Desglose de Costos</h2>
+      <div class="result-row">
+        <span class="result-label">Flete Base:</span>
+        <span class="result-value" id="fleteBase">$ 0.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">FS / Fuel Surcharge:</span>
+        <span class="result-value" id="fuelSurcharge">$ 0.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Otros Cargos:</span>
+        <span class="result-value" id="otrosCargos">$ 0.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Flete Nacional:</span>
+        <span class="result-value" id="base">$ 95.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Aduanas:</span>
+        <span class="result-value" id="aduanas">$ 95.00</span>
+      </div>
+      <div class="result-row" style="border-top: 2px solid #7899d6; padding-top: 15px; margin-top: 10px;">
+        <span class="result-label" style="font-size: 16px;">TOTAL:</span>
+        <span class="result-value" style="font-size: 16px; color: #19356a;" id="total">$ 0.00</span>
+      </div>
+    </div>
+
+    <div class="total-section">
+      <h2>TOTAL A PAGAR (CIP)</h2>
+      <div class="total-amount" id="totalFinal">$ 0.00</div>
+    </div>
+  </div>
+
+  <script>
+const FACTOR_VOLUMEN = 167;
+
+// PROVEEDOR A - 16 destinos
+const proveedorA = {
+  nombre: 'Proveedor A',
+  requiereAerolinea: false,
+  usaCBM: true,
+  destinos: {
+    AUA: { nombre: 'ARUBA', iata: 'AUA', fleteMin: 190.00, r45: 1.70, r100: 1.70, r300: 1.65, r500: 1.65, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    PTY: { nombre: 'CIUDAD DE PANAMÁ', iata: 'PTY', fleteMin: 150.00, r45: 1.75, r100: 1.20, r300: 0.85, r500: 0.80, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 },
+    GUA: { nombre: 'GUATEMALA', iata: 'GUA', fleteMin: 135.00, r45: 1.20, r100: 1.15, r300: 1.15, r500: 1.10, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    GYE: { nombre: 'GUAYAQUIL', iata: 'GYE', fleteMin: 135.00, r45: 1.20, r100: 1.15, r300: 1.10, r500: 0.85, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    LIM: { nombre: 'LIMA', iata: 'LIM', fleteMin: 120.00, r45: 1.00, r100: 0.95, r300: 0.95, r500: 0.90, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 },
+    MIA: { nombre: 'MIAMI', iata: 'MIA', fleteMin: 135.00, r45: 1.10, r100: 1.10, r300: 1.10, r500: 1.05, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    UIO: { nombre: 'QUITO', iata: 'UIO', fleteMin: 150.00, r45: 0.80, r100: 0.75, r300: 0.70, r500: 0.70, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    SJO: { nombre: 'SAN JOSE', iata: 'SJO', fleteMin: 135.00, r45: 1.20, r100: 1.10, r300: 1.10, r500: 1.08, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    SJU: { nombre: 'SAN JUAN', iata: 'SJU', fleteMin: 135.00, r45: 1.98, r100: 1.95, r300: 1.90, r500: 1.85, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    SAL: { nombre: 'SAN SALVADOR', iata: 'SAL', fleteMin: 135.00, r45: 1.20, r100: 1.15, r300: 1.10, r500: 1.10, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    SDQ: { nombre: 'SANTO DOMINGO', iata: 'SDQ', fleteMin: 155.00, r45: 3.37, r100: 1.95, r300: 1.72, r500: 1.57, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 },
+    SCL: { nombre: 'SANTIAGO', iata: 'SCL', fleteMin: 140.00, r45: 2.10, r100: 2.10, r300: 1.80, r500: 1.55, fsMin: 0, fsKg: 0, dueCarrier: 30.00, dueAgent: 25.00 },
+    SAP: { nombre: 'SAN PEDRO SULA', iata: 'SAP', fleteMin: 140.00, r45: 3.30, r100: 2.85, r300: 2.55, r500: 2.23, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 },
+    PUJ: { nombre: 'PUNTA CANA', iata: 'PUJ', fleteMin: 150.00, r45: 1.40, r100: 1.40, r300: 1.35, r500: 1.30, fsMin: 0, fsKg: 0, dueCarrier: 0, dueAgent: 25.00 },
+    TGU: { nombre: 'TEGUCIGALPA', iata: 'TGU', fleteMin: 140.00, r45: 2.80, r100: 2.55, r300: 2.45, r500: 2.40, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 },
+    LPB: { nombre: 'LA PAZ', iata: 'LPB', fleteMin: 220.00, r45: 5.05, r100: 4.38, r300: 4.25, r500: 4.05, fsMin: 0, fsKg: 0, dueCarrier: 25.00, dueAgent: 25.00 }
+  }
+};
+
+// PROVEEDOR B - Ahora con usaCBM: true y todos dueCarrier: 25
+const proveedorB = {
+  nombre: 'Proveedor B',
+  requiereAerolinea: true,
+  usaCBM: true,
+  destinos: {
+    ARUBA: {
+      iata: 'AUA',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.57, gt100: 2.47, gt300: 2.27, gt500: 2.17, gt1000: 2.62, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AVIANCA (120*100*80cm / 150Kg)': { minima: 180.00, lt100: 1.42, gt100: 1.42, gt300: 1.42, gt500: 1.42, gt1000: 1.42, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    GUATEMALA: {
+      iata: 'GUA',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.12, gt100: 1.67, gt300: 1.42, gt500: 1.32, gt1000: 1.32, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AIR CARGO PACK (200*300*170cm)': { minima: 190.00, lt100: 2.47, gt100: 1.97, gt300: 1.72, gt500: 1.57, gt1000: 1.57, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 },
+        'AVIANCA (PROMO) (171*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.12, gt100: 1.12, gt300: 1.12, gt500: 1.12, gt1000: 1.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    GUAYAQUIL: {
+      iata: 'GYE',
+      aerolineas: {
+        'LATAM (160*140*110cm / 79Kg)': { minima: 160.00, lt100: 1.12, gt100: 1.02, gt300: 0.97, gt500: 0.92, gt1000: 0.92, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 },
+        'AVIANCA (170*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.12, gt100: 1.12, gt300: 1.12, gt500: 1.12, gt1000: 1.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.04, gt100: 1.85, gt300: 1.37, gt500: 1.17, gt1000: 1.17, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    'LA PAZ': {
+      iata: 'LPB',
+      aerolineas: {
+        'AVIANCA (170*150*119cm / 200Kg)': { minima: 180.00, lt100: 6.13, gt100: 5.13, gt300: 4.63, gt500: 4.33, gt1000: 4.13, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 },
+        'LATAM (160*140*110cm / 79Kg)': { minima: 270.00, lt100: 5.12, gt100: 4.42, gt300: 4.32, gt500: 4.12, gt1000: 4.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    LIMA: {
+      iata: 'LIM',
+      aerolineas: {
+        'LATAM (160*140*110cm / 79Kg)': { minima: 165.00, lt100: 1.32, gt100: 1.22, gt300: 1.12, gt500: 1.02, gt1000: 1.02, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 },
+        'AVIANCA (PROMO) (170*150*119cm / 200Kg)': { minima: 180.00, lt100: 0.92, gt100: 0.92, gt300: 0.92, gt500: 0.92, gt1000: 0.92, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 },
+        'COPA CARGUERO (300*200*130)': { minima: 260.00, lt100: 3.72, gt100: 2.22, gt300: 2.17, gt500: 2.12, gt1000: 2.12, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15, otrosKg: 10 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 1.72, gt100: 1.47, gt300: 1.27, gt500: 1.17, gt1000: 1.17, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    MEXICO: {
+      iata: 'MEX',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.27, gt100: 1.67, gt300: 1.12, gt500: 0.87, gt1000: 0.87, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AVIANCA PROMO (170*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.12, gt100: 1.12, gt300: 1.12, gt500: 1.12, gt1000: 1.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 0, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    MIAMI: {
+      iata: 'MIA',
+      aerolineas: {
+        'LATAM (317*210*240cm / 300Kg)': { minima: 220.00, lt100: 2.02, gt100: 1.92, gt300: 1.82, gt500: 1.72, gt1000: 1.72, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 },
+        'AVIANCA (300*200*150cm)': { minima: 180.00, lt100: 1.42, gt100: 1.42, gt300: 1.42, gt500: 1.42, gt1000: 1.42, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 1.72, gt100: 1.67, gt300: 1.52, gt500: 1.47, gt1000: 1.47, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    MONTEVIDEO: {
+      iata: 'MVD',
+      aerolineas: {
+        'LATAM (160*140*110cm / 79Kg)': { minima: 320.00, lt100: 2.92, gt100: 2.72, gt300: 2.62, gt500: 2.52, gt1000: 2.52, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 4.59, gt100: 4.12, gt300: 4.07, gt500: 3.62, gt1000: 3.62, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    'PALMEROLA TEGUCIGALPA': {
+      iata: 'XPL',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 190.00, lt100: 2.52, gt100: 2.27, gt300: 2.22, gt500: 2.17, gt1000: 2.17, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 5.00 }
+      }
+    },
+    'PANAMA': {
+      iata: 'PTY',
+      aerolineas: {
+        'AIR CARGO PACK': { minima: 160.00, lt100: 1.42, gt100: 1.02, gt300: 0.92, gt500: 0.82, gt1000: 0.82, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 1.42, gt100: 1.17, gt300: 0.92, gt500: 0.62, gt1000: 0.62, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AVIANCA PROMO (171*100*80 / 150Kg)': { minima: 180.00, lt100: 0.57, gt100: 0.57, gt300: 0.57, gt500: 0.57, gt1000: 0.57, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    QUITO: {
+      iata: 'UIO',
+      aerolineas: {
+        'AVIANCA PROMO (170*150*119cm / 150Kg)': { minima: 180.00, lt100: 0.62, gt100: 0.62, gt300: 0.62, gt500: 0.62, gt1000: 0.62, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 0, otrosKg: 0 },
+        'COPA CARGUERO (300*200*130cm)': { minima: 260.00, lt100: 3.72, gt100: 1.87, gt300: 1.72, gt500: 1.62, gt1000: 1.62, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 15.00, otrosKg: 0 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 1.72, gt100: 1.31, gt300: 1.25, gt500: 1.07, gt1000: 1.07, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    'SAN JOSE': {
+      iata: 'SJO',
+      aerolineas: {
+        'AIR CARGO PACK': { minima: 160.00, lt100: 1.62, gt100: 1.22, gt300: 1.07, gt500: 1.02, gt1000: 1.02, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 1.77, gt100: 1.17, gt300: 0.92, gt500: 0.82, gt1000: 0.82, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AVIANCA (PROMO) (171*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.12, gt100: 1.12, gt300: 1.12, gt500: 1.12, gt1000: 1.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    'SAN JUAN': {
+      iata: 'SJU',
+      aerolineas: {
+        'AVIANCA (170*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.92, gt100: 1.92, gt300: 1.92, gt500: 1.92, gt1000: 1.92, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 },
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.42, gt100: 2.07, gt300: 1.77, gt500: 1.57, gt1000: 1.57, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 15.00 }
+      }
+    },
+    'SAN PEDRO SULA': {
+      iata: 'SAP',
+      aerolineas: {
+        'AIR CARGO PACK (200*300*170cm)': { minima: 190.00, lt100: 2.42, gt100: 2.27, gt300: 1.92, gt500: 1.52, gt1000: 1.52, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 }
+      }
+    },
+    'SAN SALVADOR': {
+      iata: 'SAL',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.42, gt100: 2.04, gt300: 1.85, gt500: 1.59, gt1000: 1.59, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 },
+        'AIR CARGO PACK (120*100*80cm / 150Kg)': { minima: 190.00, lt100: 2.27, gt100: 1.97, gt300: 1.62, gt500: 1.52, gt1000: 1.52, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 },
+        'AVIANCA (PROMO) (171*150*119cm / 200Kg)': { minima: 180.00, lt100: 1.12, gt100: 1.12, gt300: 1.12, gt500: 1.12, gt1000: 1.12, es: 0, fuelMin: 0, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 0, otrosKg: 0 }
+      }
+    },
+    'SANTA LUCIA': {
+      iata: 'NLU',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.27, gt100: 1.67, gt300: 1.42, gt500: 1.07, gt1000: 1.07, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    SANTIAGO: {
+      iata: 'SCL',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 3.37, gt100: 2.57, gt300: 1.57, gt500: 1.37, gt1000: 1.37, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    'SANTO DOMINGO': {
+      iata: 'SDQ',
+      aerolineas: {
+        'COPA (120*100*80cm / 150Kg)': { minima: 165.00, lt100: 2.97, gt100: 1.97, gt300: 1.47, gt500: 1.37, gt1000: 1.37, es: 0.25, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 0 }
+      }
+    },
+    TEGUCIGALPA: {
+      iata: 'TGU',
+      aerolineas: {
+        'AIR CARGO PACK (200*300*170cm)': { minima: 180.00, lt100: 2.07, gt100: 1.92, gt300: 1.62, gt500: 1.47, gt1000: 1.47, es: 0.15, fuelMin: 15.00, dueAgent: 50.00, dueCarrier: 25.00, otrosAwb: 15.00, otrosKg: 50.00 }
+      }
+    }
+  }
+};
+
+let proveedorActual = proveedorA;
+
+document.getElementById('proveedor').addEventListener('change', function() {
+  proveedorActual = this.value === 'A' ? proveedorA : proveedorB;
+  actualizarUI();
+  cargarDestinos();
+  limpiarResultados();
+});
+
+document.getElementById('destino').addEventListener('change', function() {
+  cargarAerolineas();
+  calcular();
+});
+
+document.getElementById('aerolinea').addEventListener('change', calcular);
+document.getElementById('pesoFisico').addEventListener('input', calcular);
+document.getElementById('volumen').addEventListener('input', calcular);
+
+function actualizarUI() {
+  const aerolineaGroup = document.getElementById('aerolineaGroup');
+  const volumenLabel = document.getElementById('volumenLabel');
+  const volumenInfo = document.getElementById('volumenInfo');
+
+  if (proveedorActual.requiereAerolinea) {
+    aerolineaGroup.style.display = 'block';
+  } else {
+    aerolineaGroup.style.display = 'none';
+  }
+
+  if (proveedorActual.usaCBM) {
+    volumenLabel.textContent = 'Volumen (CBM)';
+    volumenInfo.innerHTML = `<strong>Proveedor ${proveedorActual.nombre === 'Proveedor A' ? 'A' : 'B'}:</strong><br>• Ingrese el volumen en metros cúbicos (CBM).<br>• El sistema calculará: <strong>Peso Volumen = CBM × 167</strong><br>• Peso para Calcular = MAX(Peso Físico, Peso Volumen)`;
+  } else {
+    volumenLabel.textContent = 'Peso Volumétrico (kg/vol)';
+    volumenInfo.innerHTML = `<strong>Proveedor B:</strong><br>• Ingrese directamente el peso volumétrico en kg/vol.<br>• Peso para Calcular = MAX(Peso Físico, Peso Volumétrico)`;
+  }
+}
+
+function cargarDestinos() {
+  const destinoSelect = document.getElementById('destino');
+  destinoSelect.innerHTML = '<option value="">Seleccione un destino...</option>';
+
+  const destinos = Object.keys(proveedorActual.destinos).sort((a, b) => {
+    const nombreA = proveedorActual.destinos[a].nombre || a;
+    const nombreB = proveedorActual.destinos[b].nombre || b;
+    return nombreA.localeCompare(nombreB);
+  });
+
+  destinos.forEach(key => {
+    const destino = proveedorActual.destinos[key];
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = destino.nombre || key;
+    destinoSelect.appendChild(option);
+  });
+}
+
+function cargarAerolineas() {
+  const destinoCodigo = document.getElementById('destino').value;
+  const aerolineaSelect = document.getElementById('aerolinea');
+
+  aerolineaSelect.innerHTML = '<option value="">Seleccione aerolínea...</option>';
+
+  if (!destinoCodigo || !proveedorActual.requiereAerolinea) return;
+
+  const destino = proveedorActual.destinos[destinoCodigo];
+  if (destino && destino.aerolineas) {
+    Object.keys(destino.aerolineas).forEach(nombreAerolinea => {
+      const option = document.createElement('option');
+      option.value = nombreAerolinea;
+      option.textContent = nombreAerolinea;
+      aerolineaSelect.appendChild(option);
+    });
+  }
+}
+
+function calcular() {
+  const destinoCodigo = document.getElementById('destino').value;
+  const aerolineaNombre = document.getElementById('aerolinea').value;
+  const pesoFisico = parseFloat(document.getElementById('pesoFisico').value) || 0;
+  const volumenInput = parseFloat(document.getElementById('volumen').value) || 0;
+
+  if (!destinoCodigo) {
+    limpiarResultados();
+    return;
+  }
+
+  const destino = proveedorActual.destinos[destinoCodigo];
+  if (!destino) {
+    limpiarResultados();
+    return;
+  }
+
+  let tarifa = null;
+  let iata = destino.iata;
+
+  if (proveedorActual.requiereAerolinea) {
+    if (!aerolineaNombre) {
+      document.getElementById('aerolineaError').style.display = 'block';
+      limpiarResultados();
+      document.getElementById('codigoIata').textContent = iata;
+      return;
+    }
+    document.getElementById('aerolineaError').style.display = 'none';
+    tarifa = destino.aerolineas[aerolineaNombre];
+  } else {
+    tarifa = destino;
+  }
+
+  if (!tarifa) {
+    limpiarResultados();
+    return;
+  }
+
+  let pesoVolumen = 0;
+  if (proveedorActual.usaCBM) {
+    pesoVolumen = volumenInput * FACTOR_VOLUMEN;
+  } else {
+    pesoVolumen = volumenInput;
+  }
+
+  const pesoCalcular = Math.max(pesoFisico, pesoVolumen);
+
+  document.getElementById('codigoIata').textContent = iata;
+  document.getElementById('pesoVolumen').textContent = pesoVolumen.toFixed(2);
+  document.getElementById('pesoCalcular').textContent = pesoCalcular.toFixed(2);
+
+  let fleteBase = 0;
+  if (proveedorActual.nombre === 'Proveedor A') {
+    if (pesoCalcular <= 45) {
+      fleteBase = Math.max(tarifa.fleteMin, pesoCalcular * tarifa.r45);
+    } else if (pesoCalcular <= 100) {
+      fleteBase = Math.max(tarifa.fleteMin, pesoCalcular * tarifa.r100);
+    } else if (pesoCalcular <= 300) {
+      fleteBase = Math.max(tarifa.fleteMin, pesoCalcular * tarifa.r300);
+    } else {
+      fleteBase = Math.max(tarifa.fleteMin, pesoCalcular * tarifa.r500);
+    }
+  } else {
+    if (pesoCalcular < 100) {
+      fleteBase = Math.max(tarifa.minima, pesoCalcular * tarifa.lt100);
+    } else if (pesoCalcular < 300) {
+      fleteBase = Math.max(tarifa.minima, pesoCalcular * tarifa.gt100);
+    } else if (pesoCalcular < 500) {
+      fleteBase = Math.max(tarifa.minima, pesoCalcular * tarifa.gt300);
+    } else if (pesoCalcular < 1000) {
+      fleteBase = Math.max(tarifa.minima, pesoCalcular * tarifa.gt500);
+    } else {
+      fleteBase = Math.max(tarifa.minima, pesoCalcular * tarifa.gt1000);
+    }
+  }
+
+  let fuelSurcharge = 0;
+  if (proveedorActual.nombre === 'Proveedor A') {
+    fuelSurcharge = Math.max(tarifa.fsMin, pesoCalcular * tarifa.fsKg);
+  } else {
+    const esCargo = pesoCalcular * tarifa.es;
+    const fuel = Math.max(tarifa.fuelMin, fleteBase * 0.25);
+    fuelSurcharge = esCargo + fuel;
+  }
+
+  let otrosCargos = 0;
+  if (proveedorActual.nombre === 'Proveedor A') {
+    otrosCargos = tarifa.dueCarrier + tarifa.dueAgent + 40;
+  } else {
+    const awb = tarifa.otrosAwb;
+    const kgCharge = pesoCalcular * tarifa.otrosKg;
+    otrosCargos = tarifa.dueAgent + tarifa.dueCarrier + awb + kgCharge + 40;
+  }
+
+  const base = 95;
+  const aduanas = 95;
+
+  const total = fleteBase + fuelSurcharge + otrosCargos + base + aduanas;
+
+  document.getElementById('fleteBase').textContent = `$ ${fleteBase.toFixed(2)}`;
+  document.getElementById('fuelSurcharge').textContent = `$ ${fuelSurcharge.toFixed(2)}`;
+  document.getElementById('otrosCargos').textContent = `$ ${otrosCargos.toFixed(2)}`;
+  document.getElementById('base').textContent = `$ ${base.toFixed(2)}`;
+  document.getElementById('aduanas').textContent = `$ ${aduanas.toFixed(2)}`;
+  document.getElementById('total').textContent = `$ ${total.toFixed(2)}`;
+  document.getElementById('totalFinal').textContent = `$ ${total.toFixed(2)}`;
+}
+
+function limpiarResultados() {
+  document.getElementById('codigoIata').textContent = '-';
+  document.getElementById('pesoVolumen').textContent = '-';
+  document.getElementById('pesoCalcular').textContent = '-';
+  document.getElementById('fleteBase').textContent = '$ 0.00';
+  document.getElementById('fuelSurcharge').textContent = '$ 0.00';
+  document.getElementById('otrosCargos').textContent = '$ 0.00';
+  document.getElementById('base').textContent = '$ 95.00';
+  document.getElementById('aduanas').textContent = '$ 95.00';
+  document.getElementById('total').textContent = '$ 0.00';
+  document.getElementById('totalFinal').textContent = '$ 0.00';
+}
+
+actualizarUI();
+cargarDestinos();
+limpiarResultados();
+  </script>
+</body>
+</html>
+
+Esta calculadora solo refleja valores estimados o apróximados.
+

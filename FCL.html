@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquidador Maritimo FCL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: #7899d6;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7899d6;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .form-group input[readonly] {
+            background-color: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .total-section {
+            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .total-value {
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .total-value {
+                font-size: 32px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #7899d6;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Liquidador FCL</h1>
+            <p>Enero 2026</p>
+        </div>
+
+        <div class="content">
+            <!-- SECCIÓN 1: DATOS PRINCIPALES -->
+            <div class="section">
+                <div class="section-title">📍 Información de Ruta</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="destino">Destino</label>
+                        <select id="destino" required>
+                            <option value="">Seleccione destino...</option>
+                        </select>
+                        <span class="error-message" id="error-destino">Debe seleccionar un destino</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="origen">Origen <span class="info-badge">Auto</span></label>
+                        <input type="text" id="origen" readonly placeholder="Se asigna automáticamente">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contenedor">Tipo de Contenedor</label>
+                        <select id="contenedor" required>
+                            <option value="">Seleccione contenedor...</option>
+                            <option value="20STD">20 STD</option>
+                            <option value="40HC">40 HC</option>
+                        </select>
+                        <span class="error-message" id="error-contenedor">Debe seleccionar un tipo de contenedor</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tiempoTransito">Tiempo de Tránsito ⌛ <span class="info-badge">Auto</span></label>
+                        <input type="text" id="tiempoTransito" readonly placeholder="Se asigna automáticamente">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="navieras">Navieras 🚢 <span class="info-badge">Auto</span></label>
+                        <input type="text" id="navieras" readonly placeholder="Se asignan automáticamente">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: COSTOS -->
+            <div class="section">
+                <div class="section-title">💲 Detalle de Costos</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="valorMercancia">Valor Mercancía (USD)</label>
+                        <input type="number" id="valorMercancia" placeholder="0.00" min="0" step="0.01">
+                        <span class="error-message" id="error-mercancia">Ingrese el valor de la mercancía</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valorAduana">Valor Aduana (USD) <span class="info-badge">Auto</span></label>
+                        <input type="text" id="valorAduana" readonly placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valorFlete">Valor Flete (USD) <span class="info-badge">Auto</span></label>
+                        <input type="text" id="valorFlete" readonly placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gastosPortuarios">Gastos Portuarios (USD) <span class="info-badge">Auto</span></label>
+                        <input type="text" id="gastosPortuarios" readonly placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fleteTerrestre">Flete Terrestre (USD) <span class="info-badge">Auto</span></label>
+                        <input type="text" id="fleteTerrestre" readonly placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: TOTAL -->
+            <div class="total-section">
+                <div class="total-label">VALOR TOTAL APROXIMADO</div>
+                <div class="total-value" id="totalValue">USD 0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos de tarifas
+        const tarifas = [
+            { origen: "BUENAVENTURA", destino: "ACAJUTLA", "20STD": 1770.00, "40HC": 1790.00, navieras: "MSC - MAERSK", transito: "22" },
+            { origen: "CARTAGENA", destino: "BUENOS AIRES", "20STD": 930.00, "40HC": 1030.00, navieras: "COSCO - HAPAG - MSK SPOT - ONE", transito: "24" },
+            { origen: "BUENAVENTURA", destino: "CALLAO", "20STD": 580.00, "40HC": 615.00, navieras: "COSCO - EMC - MAERSK - MSC - ONE - PIL - ROLCO", transito: "4" },
+            { origen: "CARTAGENA", destino: "CAUCEDO", "20STD": 750.00, "40HC": 855.00, navieras: "COSCO - MAERSK", transito: "5" },
+            { origen: "CARTAGENA", destino: "CRISTOBAL", "20STD": 750.00, "40HC": 990.00, navieras: "MSC", transito: "1" },
+            { origen: "BUENAVENTURA", destino: "GUAYAQUIL", "20STD": 580.00, "40HC": 580.00, navieras: "MSC - ONE SPOT - COSCO - ZIM LINES - MAERSK", transito: "7" },
+            { origen: "BUENAVENTURA", destino: "GUAYAQUIL /POSORJA", "20STD": 400.00, "40HC": 440.00, navieras: "MAERSK", transito: "6" },
+            { origen: "CARTAGENA", destino: "LA GUAIRA", "20STD": 1770.00, "40HC": 1940.00, navieras: "HAPAG - MAERSK", transito: "3" },
+            { origen: "BUENAVENTURA", destino: "LAZARO CARDENAS", "20STD": 1095.00, "40HC": 1195.00, navieras: "ONE", transito: "8" },
+            { origen: "CARTAGENA", destino: "LONG BEACH", "20STD": 1725.00, "40HC": 1930.00, navieras: "ONE - HAPAG", transito: "16" },
+            { origen: "BUENAVENTURA", destino: "MANZANILLO (MEXICO)", "20STD": 1105.00, "40HC": 1105.00, navieras: "ONE - MSC - HAPAG", transito: "11" },
+            { origen: "CARTAGENA", destino: "MANZANILLO (PANAMA)", "20STD": 930.00, "40HC": 960.00, navieras: "MAERSK - HAPAG - ONE - COSCO", transito: "3" },
+            { origen: "BUENAVENTURA", destino: "MONTEVIDEO BUN", "20STD": 1940.00, "40HC": 2180.00, navieras: "MAERSK", transito: "7 - 36" },
+            { origen: "CARTAGENA", destino: "MONTEVIDEO CTG", "20STD": 880.00, "40HC": 985.00, navieras: "COSCO MAERSK", transito: "32" },
+            { origen: "CARTAGENA", destino: "ORANJESTAD", "20STD": 2310.00, "40HC": 3460.20, navieras: "CMA - MAERSK", transito: "16" },
+            { origen: "CARTAGENA", destino: "PORT EVERGLADES", "20STD": 1090.00, "40HC": 1200.00, navieras: "CMA", transito: "3" },
+            { origen: "CARTAGENA", destino: "PUERTO BARRIOS", "20STD": 1280.00, "40HC": 1330.00, navieras: "MSC - HPL - ONE", transito: "15" },
+            { origen: "CARTAGENA", destino: "PUERTO CABELLO", "20STD": 1770.00, "40HC": 1910.00, navieras: "MAERSK - HAPAG", transito: "6" },
+            { origen: "CARTAGENA", destino: "PUERTO CORTES", "20STD": 1280.00, "40HC": 1326.00, navieras: "MSC - CMA - MAERSK - COSCO", transito: "18" },
+            { origen: "CARTAGENA", destino: "PUERTO LIMON", "20STD": 1340.00, "40HC": 1190.00, navieras: "HAPAG", transito: "3" },
+            { origen: "CARTAGENA", destino: "PUERTO MOIN", "20STD": 1054.00, "40HC": 1176.00, navieras: "COSCO - MAERSK", transito: "5" },
+            { origen: "BUENAVENTURA", destino: "PUERTO QUETZAL", "20STD": 1200.00, "40HC": 1380.00, navieras: "MAERSK - ONE", transito: "20" },
+            { origen: "CARTAGENA", destino: "PUERTO QUETZAL", "20STD": 1360.00, "40HC": 1570.00, navieras: "MSC", transito: "20" },
+            { origen: "CARTAGENA", destino: "RIO HAINA", "20STD": 950.00, "40HC": 1020.00, navieras: "COSCO - MAERSK", transito: "8" },
+            { origen: "BUENAVENTURA", destino: "SAN ANTONIO", "20STD": 530.00, "40HC": 566.00, navieras: "ROLCO - MAERSK - PIL - COSCO", transito: "11" },
+            { origen: "CARTAGENA", destino: "SAN JUAN", "20STD": 1290.00, "40HC": 1375.00, navieras: "HAPAG - MAERSK", transito: "7" },
+            { origen: "CARTAGENA", destino: "SAN PEDRO SULA", "20STD": 1490.00, "40HC": 1570.00, navieras: "MAERSK - HAPAG", transito: "11 - 21" },
+            { origen: "CARTAGENA", destino: "SAN SALVADOR", "20STD": 2065.00, "40HC": 2150.00, navieras: "HAPAG", transito: "14" },
+            { origen: "CARTAGENA", destino: "SANTO TOMAS DE CASTILLA", "20STD": 1170.00, "40HC": 1220.00, navieras: "MAERSK - COSCO", transito: "11" },
+            { origen: "CARTAGENA", destino: "VERACRUZ", "20STD": 990.00, "40HC": 795.00, navieras: "HAPAG - COSCO - CMA - MAERSK", transito: "8" }
+        ];
+
+        // Referencias a elementos DOM
+        const destinoSelect = document.getElementById('destino');
+        const origenInput = document.getElementById('origen');
+        const contenedorSelect = document.getElementById('contenedor');
+        const tiempoTransitoInput = document.getElementById('tiempoTransito');
+        const valorMercanciaInput = document.getElementById('valorMercancia');
+        const valorAduanaInput = document.getElementById('valorAduana');
+        const valorFleteInput = document.getElementById('valorFlete');
+        const gastosPortuariosInput = document.getElementById('gastosPortuarios');
+        const fleteTerrestreInput = document.getElementById('fleteTerrestre');
+        const navierasInput = document.getElementById('navieras');
+        const totalValueDiv = document.getElementById('totalValue');
+
+        // Poblar desplegable de destinos (sin duplicados)
+        const destinosUnicos = [...new Set(tarifas.map(t => t.destino))].sort();
+        destinosUnicos.forEach(destino => {
+            const option = document.createElement('option');
+            option.value = destino;
+            option.textContent = destino;
+            destinoSelect.appendChild(option);
+        });
+
+        // Formatear número con separador de miles y decimales
+        function formatearMoneda(valor) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(valor);
+        }
+
+        // Calcular valor aduana: max(valor_mercancia * 0.0028, 95)
+        function calcularValorAduana(valorMercancia) {
+            if (!valorMercancia || valorMercancia <= 0) return 0;
+            const calculo = valorMercancia * 0.0028;
+            return Math.max(calculo, 95);
+        }
+
+        // Obtener flete terrestre según origen y contenedor
+        function obtenerFleteTerrestre(origen, contenedor) {
+            const tarifasTerrestre = {
+                'BUENAVENTURA': { '20STD': 680, '40HC': 1010 },
+                'CARTAGENA': { '20STD': 800, '40HC': 1080 }
+            };
+            return tarifasTerrestre[origen]?.[contenedor] || 0;
+        }
+
+        // Obtener gastos portuarios según tipo de contenedor
+        function obtenerGastosPortuarios(contenedor) {
+            return contenedor === '20STD' ? 350 : contenedor === '40HC' ? 420 : 0;
+        }
+
+        // Buscar tarifa de flete en la base de datos
+        function buscarTarifaFlete(destino, contenedor) {
+            const tarifa = tarifas.find(t => t.destino === destino);
+            if (!tarifa) return { flete: 0, origen: '', navieras: '', transito: '' };
+            return {
+                flete: tarifa[contenedor] || 0,
+                origen: tarifa.origen,
+                navieras: tarifa.navieras || '',
+                transito: tarifa.transito || ''
+            };
+        }
+
+        // Calcular y actualizar todos los valores
+        function calcularTotal() {
+            const destino = destinoSelect.value;
+            const contenedor = contenedorSelect.value;
+            const valorMercancia = parseFloat(valorMercanciaInput.value) || 0;
+
+            // Si no hay datos básicos, resetear
+            if (!destino || !contenedor) {
+                origenInput.value = '';
+                tiempoTransitoInput.value = '';
+                valorAduanaInput.value = '';
+                valorFleteInput.value = '';
+                gastosPortuariosInput.value = '';
+                fleteTerrestreInput.value = '';
+                navierasInput.value = '';
+                totalValueDiv.textContent = 'USD 0.00';
+                return;
+            }
+
+            // Buscar tarifa, origen, navieras y tiempo de tránsito
+            const { flete, origen, navieras, transito } = buscarTarifaFlete(destino, contenedor);
+            origenInput.value = origen;
+            navierasInput.value = navieras;
+            tiempoTransitoInput.value = transito ? `${transito} días` : '';
+
+            // Calcular valores
+            const valorAduana = calcularValorAduana(valorMercancia);
+            const gastosPortuarios = obtenerGastosPortuarios(contenedor);
+            const fleteTerrestre = obtenerFleteTerrestre(origen, contenedor);
+
+            // Mostrar valores individuales
+            valorAduanaInput.value = formatearMoneda(valorAduana);
+            valorFleteInput.value = formatearMoneda(flete);
+            gastosPortuariosInput.value = formatearMoneda(gastosPortuarios);
+            fleteTerrestreInput.value = formatearMoneda(fleteTerrestre);
+
+            // Calcular total
+            const total = valorMercancia + valorAduana + flete + gastosPortuarios + fleteTerrestre;
+            totalValueDiv.textContent = `USD ${formatearMoneda(total)}`;
+        }
+
+        // Event listeners
+        destinoSelect.addEventListener('change', calcularTotal);
+        contenedorSelect.addEventListener('change', calcularTotal);
+        valorMercanciaInput.addEventListener('input', calcularTotal);
+
+        // Validación al cambiar campos
+        destinoSelect.addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('error-destino').classList.remove('show');
+            }
+        });
+
+        contenedorSelect.addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('error-contenedor').classList.remove('show');
+            }
+        });
+
+        valorMercanciaInput.addEventListener('input', function() {
+            if (this.value && parseFloat(this.value) > 0) {
+                document.getElementById('error-mercancia').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
+
+Esta calculadora solo refleja valores estimados o apróximados.
