@@ -3,105 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liquidador EXPO - Marzo</title>
+    <title>Liquidador EXPO - Marzo 2026</title>
+    <!-- Mismas fuentes e iconos de Aereo.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root{
+            --bg0:#06121f;
+            --bg1:#071a2d;
+            --card:rgba(11, 29, 55, .78);
+            --stroke:rgba(99, 179, 237, .22);
+            --sky:#38bdf8;
+            --sky2:#22d3ee;
+            --sun:#fbbf24;
+            --text:#eaf4ff;
+            --muted:#86a8c7;
+            --glow:rgba(56, 189, 248, 0.4);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
+            font-family: "Poppins", system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            /* Fondo igual al de Aereo-2.html */
+            background: radial-gradient(1200px 700px at 20% 5%, rgba(56,189,248,.15), transparent 60%),
+                        radial-gradient(900px 520px at 80% 10%, rgba(251,191,36,.1), transparent 55%),
+                        linear-gradient(170deg, var(--bg0), var(--bg1));
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            overflow: hidden;
+            position: relative;
         }
 
+        /* Ruido sutil para textura */
+        .noise {
+            position: fixed; inset: 0;
+            pointer-events: none;
+            opacity: .08;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        /* --- Animaciones de Fondo (Ilustración en movimiento) --- */
+        @keyframes fly {
+            0% { transform: translate(-150px, 50px) rotate(-10deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translate(120vw, -150px) rotate(5deg); opacity: 0; }
+        }
+
+        @keyframes sail {
+            0% { transform: translate(-150px, 0) rotate(-2deg); opacity: 0; }
+            10% { opacity: 0.2; }
+            90% { opacity: 0.2; }
+            100% { transform: translate(120vw, 0) rotate(2deg); opacity: 0; }
+        }
+
+        .animated-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .plane-anim {
+            position: absolute;
+            top: 15%;
+            left: -10%;
+            font-size: 80px;
+            color: rgba(255, 255, 255, 0.05);
+            animation: fly 25s linear infinite;
+        }
+
+        .plane-anim:nth-child(2) {
+            top: 50%;
+            font-size: 50px;
+            animation: fly 35s linear infinite 12s; /* Desfasado en tiempo */
+        }
+
+        .ship-anim {
+            position: absolute;
+            bottom: 10%;
+            left: -10%;
+            font-size: 100px;
+            color: rgba(255, 255, 255, 0.05);
+            animation: sail 40s linear infinite 5s;
+        }
+
+        /* --- Contenedor Principal Glassmorphism --- */
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            background: var(--card);
+            border: 1px solid var(--stroke);
+            border-radius: 24px;
             padding: 50px 40px;
-            max-width: 600px;
-            width: 100%;
+            max-width: 500px;
+            width: 90%;
             text-align: center;
-            animation: fadeIn 0.6s ease-in-out;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            margin-bottom: 40px;
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .header h1 {
-            color: #19356a;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--sky));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
         }
 
-        .header .mes {
+        .badge {
             display: inline-block;
-            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 16px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--sky);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
             font-weight: 600;
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(120, 153, 214, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
         }
 
         .question {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 40px;
-            font-weight: 500;
+            font-size: 20px;
+            color: var(--muted);
+            margin-bottom: 35px;
+            font-weight: 400;
         }
 
-        .buttons-container {
+        /* --- Botones --- */
+        .options {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
         .btn {
-            display: block;
-            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--stroke);
+            padding: 20px;
+            border-radius: 16px;
             font-size: 20px;
             font-weight: 600;
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
         }
 
+        /* Efecto de brillo de barrido al pasar el ratón */
         .btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
             transition: left 0.5s ease;
         }
 
@@ -109,86 +185,95 @@
             left: 100%;
         }
 
-        .btn-maritimo {
-            background: linear-gradient(135deg, #7899d6 0%, #5278b6 100%);
+        .btn:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        .btn-maritimo:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(120, 153, 214, 0.4);
-        }
-
-        .btn-aereo {
-            background: linear-gradient(135deg, #19356a 0%, #0d1a35 100%);
-        }
-
-        .btn-aereo:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(25, 53, 106, 0.4);
-        }
-
-        .icon {
+        .btn i {
             font-size: 28px;
-            margin-right: 12px;
-            vertical-align: middle;
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover específico para Marítimo */
+        .btn-maritimo:hover {
+            border-color: var(--sky2);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.2);
+        }
+        .btn-maritimo:hover i {
+            color: var(--sky2);
+            animation: bob 1s infinite; /* El barco se balancea */
+        }
+
+        /* Hover específico para Aéreo */
+        .btn-aereo:hover {
+            border-color: var(--sun);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.2);
+        }
+        .btn-aereo:hover i {
+            color: var(--sun);
+            transform: translate(3px, -3px) rotate(15deg); /* El avión despega */
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-4px) rotate(-5deg); }
         }
 
         .footer {
-            margin-top: 40px;
-            font-size: 13px;
-            color: #999;
+            margin-top: 35px;
+            font-size: 24px;
+            color: var(--muted);
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .footer:hover {
+            opacity: 1;
+            color: var(--sun);
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 40px 25px;
-            }
-
-            .header h1 {
-                font-size: 26px;
-            }
-
-            .question {
-                font-size: 20px;
-                margin-bottom: 30px;
-            }
-
-            .btn {
-                padding: 18px 25px;
-                font-size: 18px;
-            }
-
-            .icon {
-                font-size: 24px;
-            }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 28px; }
+            .container { padding: 40px 25px; }
+            .btn { font-size: 18px; padding: 16px; }
         }
     </style>
 </head>
 <body>
+    <div class="noise"></div>
+    
+    <!-- Ilustraciones en movimiento por detrás del menú -->
+    <div class="animated-bg">
+        <i class="fa-solid fa-plane plane-anim"></i>
+        <i class="fa-solid fa-plane plane-anim"></i>
+        <i class="fa-solid fa-ship ship-anim"></i>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>Liquidador EXPO</h1>
-            <span class="mes">MARZO 2026</span>
+            <div class="badge">MARZO 2026</div>
         </div>
 
         <div class="question">
             ¿Qué quieres calcular?
         </div>
 
-        <div class="buttons-container">
+        <div class="options">
+            <!-- Redirección igual a la original -->
             <a href="FCL.html" class="btn btn-maritimo">
-                <span class="icon">🚢</span>
+                <i class="fa-solid fa-ship"></i>
                 Marítimo (FCL)
             </a>
 
             <a href="Aereo.html" class="btn btn-aereo">
-                <span class="icon">✈️</span>
+                <i class="fa-solid fa-plane-departure"></i>
                 Aéreo
             </a>
         </div>
 
         <div class="footer">
-            😉
+            <i class="fa-regular fa-face-smile-wink"></i>
         </div>
     </div>
 </body>
