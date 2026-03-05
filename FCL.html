@@ -923,18 +923,18 @@
             }).format(valor);
         }
 
-        // Calcular valor aduana: max(valor_mercancia * 0.0028, 104)
+        // Calcular valor aduana: max(valor_mercancia * 0.0028, 120)
         function calcularValorAduana(valorMercancia) {
-            if (!valorMercancia || valorMercancia <= 0) return 104;
+            if (!valorMercancia || valorMercancia <= 0) return 120;
             const calculo = valorMercancia * 0.0028;
-            return Math.max(calculo, 104);
+            return Math.max(calculo, 120);
         }
 
         // Obtener flete terrestre según origen y contenedor
         function obtenerFleteTerrestre(origen, contenedor) {
             const tarifasTerrestre = {
                 'BUENAVENTURA': { '20STD': 750, '40HC': 1013.16 },
-                'CARTAGENA': { '20STD': 881.58, '40HC': 1118.42 }
+                'CARTAGENA': { '20STD': 881.58, '40HC': 1120.00 }
             };
             return tarifasTerrestre[origen]?.[contenedor] || 0;
         }
@@ -1005,7 +1005,7 @@
             // Si no hay datos básicos, resetear
             if (!destino || !naviera || !contenedor) {
                 tiempoTransitoInput.value = 'Auto';
-                valorAduanaInput.value = '104';
+                valorAduanaInput.value = '110';
                 valorFleteInput.value = 'Auto';
                 gastosPortuariosInput.value = 'Auto';
                 fleteTerrestreInput.value = 'Auto';
