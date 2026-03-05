@@ -3,209 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liquidador Maritimo FCL</title>
+    <title>Liquidador Marítimo FCL</title>
+
+    <!-- Fuentes e Íconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg0: #06121f;
+            --bg1: #071a2d;
+            --card: rgba(11, 29, 55, 0.78);
+            --stroke: rgba(99, 179, 237, 0.22);
+            --sky: #38bdf8;
+            --sky2: #22d3ee;
+            --sun: #fbbf24;
+            --text: #eaf4ff;
+            --muted: #86a8c7;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --bad: #ef4444;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
-            padding: 20px;
+            font-family: "Poppins", system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: radial-gradient(1200px 700px at 20% 5%, rgba(56,189,248,.15), transparent 60%),
+                        radial-gradient(900px 520px at 80% 10%, rgba(251,191,36,.1), transparent 55%),
+                        linear-gradient(170deg, var(--bg0), var(--bg1));
             min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
+        /* Ruido y Animaciones */
+        .noise {
+            position: fixed; inset: 0; pointer-events: none; opacity: .08;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay; z-index: 0;
+        }
+
+        @keyframes sail {
+            0% { transform: translate(-150px, 0) rotate(-2deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translate(120vw, 0) rotate(2deg); opacity: 0; }
+        }
+
+        .ship-bg {
+            position: fixed; bottom: 5%; left: -10%; font-size: 150px;
+            color: rgba(255, 255, 255, 0.03); animation: sail 40s linear infinite;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Contenedor principal */
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            position: relative; z-index: 10; max-width: 900px; margin: 0 auto;
+            background: var(--card); border: 1px solid var(--stroke);
+            border-radius: 24px; backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden; animation: fadeIn 0.6s ease-out;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Encabezado */
         .header {
-            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 40px 30px; text-align: center; border-bottom: 1px solid var(--stroke);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 32px; font-weight: 800; margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff, var(--sky));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         .header p {
-            font-size: 14px;
-            opacity: 0.9;
+            display: inline-block; background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3); color: var(--sky);
+            padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            letter-spacing: 1px; margin-bottom: 15px;
         }
 
-        .content {
-            padding: 30px;
+        /* TRM Badge */
+        .trm-badge {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--ok); padding: 8px 16px; border-radius: 20px;
+            font-size: 14px; font-weight: 500; margin-top: 5px; cursor: pointer; transition: 0.3s;
         }
+        .trm-badge:hover { background: rgba(34, 197, 94, 0.2); transform: scale(1.02); }
+        .trm-badge.loading { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warn); opacity: 0.8; }
+        .trm-badge.error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--bad); }
+        
+        #trmFecha { opacity: 0.75; font-size: 11px; margin-left: 5px; }
+
+        .content { padding: 30px; }
 
         .section {
-            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--stroke);
+            border-radius: 16px; padding: 25px; margin-bottom: 25px;
         }
 
         .section-title {
-            background: #7899d6;
-            color: white;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            color: var(--sky); font-size: 16px; font-weight: 600; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        
+        .form-group { display: flex; flex-direction: column; }
         .form-group label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 14px;
+            font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
         }
-
-        .form-group input,
+        
+        .form-group input, .form-group select {
+            background: rgba(6, 18, 31, 0.6); border: 1px solid var(--stroke); color: var(--text);
+            padding: 12px 15px; border-radius: 10px; font-size: 14px; font-family: inherit;
+            transition: all 0.3s ease; outline: none; appearance: none;
+        }
+        
         .form-group select {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: all 0.3s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2386a8c7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
         }
+        
+        .form-group input:focus, .form-group select:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
+        .form-group input[readonly] { background: rgba(0, 0, 0, 0.3); color: var(--muted); cursor: not-allowed; border-color: rgba(255, 255, 255, 0.05); }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #7899d6;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
-        }
+        .error { border-color: var(--bad) !important; }
+        .error-message { color: var(--bad); font-size: 12px; margin-top: 5px; display: none; font-weight: 500; }
+        .error-message.show { display: block; }
 
-        .form-group input[readonly] {
-            background-color: #f5f5f5;
-            color: #666;
-            cursor: not-allowed;
-        }
-
+        /* Total Section */
         .total-section {
-            background: linear-gradient(135deg, #7899d6 0%, #19356a 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 30px;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(56, 189, 248, 0.2) 100%);
+            border: 1px solid var(--sky); color: white; padding: 30px;
+            border-radius: 16px; text-align: center; margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15);
         }
 
-        .total-label {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
-
-        .total-value {
-            font-size: 42px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .error {
-            border-color: #ff6b6b !important;
-        }
-
-        .error-message {
-            color: #ff6b6b;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
+        .total-label { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: var(--sky2); letter-spacing: 2px; }
+        .total-value { font-size: 42px; font-weight: 800; letter-spacing: 1px; color: #fff; text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); }
+        .total-cop-label { font-size: 14px; font-weight: 500; opacity: 0.85; margin-top: 14px; color: var(--muted); }
+        .total-cop-value { font-size: 28px; font-weight: bold; letter-spacing: 1px; margin-top: 4px; color: var(--sun); }
+        .trm-nota { font-size: 11px; opacity: 0.65; margin-top: 6px; color: var(--muted); }
 
         @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .total-value {
-                font-size: 32px;
-            }
-        }
-
-        .trm-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.18);
-            border: 1px solid rgba(255,255,255,0.35);
-            border-radius: 20px;
-            padding: 5px 16px;
-            font-size: 13px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .trm-badge:hover { background: rgba(255,255,255,0.28); }
-        .trm-badge.loading { opacity: 0.7; }
-        .trm-badge.error   { border-color: #ff9999; }
-
-        .total-cop-label {
-            font-size: 14px;
-            font-weight: 500;
-            opacity: 0.85;
-            margin-top: 14px;
-        }
-        .total-cop-value {
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            opacity: 0.95;
-            margin-top: 4px;
-        }
-        .trm-nota {
-            font-size: 11px;
-            opacity: 0.65;
-            margin-top: 6px;
+            .container { padding: 20px; }
+            .header h1 { font-size: 26px; }
+            .total-value { font-size: 32px; }
+            .total-cop-value { font-size: 24px; }
         }
     </style>
 </head>
 <body>
+    <div class="noise"></div>
+    <i class="fa-solid fa-ship ship-bg"></i>
+
     <div class="container">
         <div class="header">
             <h1>Liquidador FCL</h1>
             <p>MARZO 2026</p>
 
             <div id="trmBadge" class="trm-badge loading" title="Click para actualizar TRM">
-                💱 TRM&nbsp;<strong id="trmDisplay">Cargando…</strong>
-                <span id="trmFecha" style="opacity:0.75;font-size:11px;"></span>
+                <i class="fa-solid fa-money-bill-transfer"></i> TRM&nbsp;<strong id="trmDisplay">Cargando…</strong>
+                <span id="trmFecha"></span>
             </div>
         </div>
 
         <div class="content">
             <!-- Sección de Ruta -->
             <div class="section">
-                <div class="section-title">📍 Información de Ruta</div>
+                <div class="section-title"><i class="fa-solid fa-route"></i> Información de Ruta</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="destino">Destino</label>
@@ -231,12 +209,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="tiempoTransito">Tiempo de Tránsito ⌛</label>
+                        <label for="tiempoTransito">Tiempo de Tránsito <i class="fa-regular fa-hourglass-half"></i></label>
                         <input type="text" id="tiempoTransito" value="Auto" readonly>
                     </div>
 
                     <div class="form-group">
-                        <label for="navieras">Navieras 🚢</label>
+                        <label for="navieras">Navieras <i class="fa-solid fa-ship"></i></label>
                         <select id="navieras">
                             <option value="">Seleccione naviera...</option>
                         </select>
@@ -246,11 +224,11 @@
 
             <!-- Sección de Costos -->
             <div class="section">
-                <div class="section-title">💲 Detalle de Costos</div>
+                <div class="section-title"><i class="fa-solid fa-file-invoice-dollar"></i> Detalle de Costos</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="valorMercancia">Valor Mercancía (USD)</label>
-                        <input type="number" id="valorMercancia" placeholder="Ingrese el valor de la mercancía" min="0" step="0.01">
+                        <input type="number" id="valorMercancia" placeholder="Ingrese el valor" min="0" step="0.01">
                     </div>
 
                     <div class="form-group">
@@ -1005,7 +983,7 @@
             // Si no hay datos básicos, resetear
             if (!destino || !naviera || !contenedor) {
                 tiempoTransitoInput.value = 'Auto';
-                valorAduanaInput.value = '110';
+                valorAduanaInput.value = '104';
                 valorFleteInput.value = 'Auto';
                 gastosPortuariosInput.value = 'Auto';
                 fleteTerrestreInput.value = 'Auto';
