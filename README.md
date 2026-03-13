@@ -28,6 +28,10 @@ Si deseas personalizar las tarifas o adaptar el liquidador a tus necesidades, pu
    ```bash
    git clone https://github.com/unf1nish/CargoLiq.git
 
+## Licencia
+
+Este proyecto está bajo la licencia [MIT](LICENSE).
+
 ## Aviso Legal / Disclaimer
 
 Las tarifas utilizadas en este liquidador fueron recopiladas durante mi período de **práctica empresarial como aprendiz** en el área de comercio exterior. Por lo tanto:
@@ -36,4 +40,3 @@ Las tarifas utilizadas en este liquidador fueron recopiladas durante mi período
 - Este proyecto es de carácter **estrictamente académico y educativo**.
 - El autor **no se hace responsable** por decisiones comerciales o financieras tomadas con base en los valores aquí calculados.
 - Para cotizaciones reales y vinculantes, consulta directamente con un **agente de carga certificado**
-
